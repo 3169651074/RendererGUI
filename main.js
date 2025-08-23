@@ -24,6 +24,7 @@ const childProcess = require("child_process");
 const app = electron.app;
 const window = electron.BrowserWindow;
 const ipc = electron.ipcMain;
+const dialog = electron.dialog;
 
 console.log("Modules imported.");
 
@@ -149,8 +150,13 @@ function createWindow() {
         console.log("Child process started.");
     }).catch(error => {
         console.log("Failed to start child process:", error);
-        //终止整个进程
-        app.quit();
+        //显示错误弹窗而不是退出应用
+        dialog.showErrorBox(
+            "子进程启动失败", 
+            "无法启动渲染器进程。请检查可执行文件路径是否正确，或稍后重试。\n\n" +
+            "您可以继续使用应用的其他功能。\n\n" +
+            "错误详情: " + error.message
+        );
     });
 }
 

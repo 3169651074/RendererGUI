@@ -1,0 +1,18 @@
+{
+  "name": "renderergui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cnpm": "^9.4.0"
+  },
+  "devDependencies": {
+    "electron": "latest"
+  }
+}

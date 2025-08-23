@@ -1,0 +1,207 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /*默认背景颜色，在调整过程中由JS实时更新*/
+    background-color: #B3CCE5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    /*平滑颜色变化*/
+    transition: background-color 0.5s ease;
+    /*禁用右侧滚动条*/
+    overflow: hidden;
+}
+
+h1 {
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    /*平滑颜色变化*/
+    transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 900px; /*横向页面*/
+    backdrop-filter: blur(5px);
+}
+
+.form-columns {
+    display: flex;
+    gap: 30px; /*两列之间的间隔*/
+    margin-bottom: 20px;
+}
+
+.form-column {
+    flex: 1; /*每列所用空间相同*/
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #005a70;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.resolution-manual-group {
+    margin-top: 10px;
+}
+
+.color-group {
+    align-items: center;
+}
+
+.color-group input[type="number"] {
+    flex: 1;
+}
+
+.color-group input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 45px;
+    height: 45px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.color-group input[type="color"]::-webkit-color-swatch {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.color-group input[type="color"]::-moz-color-swatch {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.input-group input {
+    width: 100%;
+}
+
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2193b0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
+}
+
+#generate-btn {
+    width: 100%;
+}
+
+/*提交、取消按钮*/
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    flex-grow: 1;
+    padding: 12px 15px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary { background-color: #007bff; }
+.btn-primary:hover { background-color: #0056b3; }
+
+.btn-success { background-color: #28a745; }
+.btn-success:hover { background-color: #1e7e34; }
+
+.btn-danger { background-color: #dc3545; }
+.btn-danger:hover { background-color: #b02a37; }
+
+.btn-warning { background-color: #fd7e14; }
+.btn-warning:hover { background-color: #e56700; }
+
+
+.output-group {
+    margin-top: 20px;
+}
+
+.output-label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.output-label-group label {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: #005a70;
+}
+
+.btn-copy {
+    background-color: #6c757d;
+    padding: 4px 10px;
+    font-size: 12px;
+    flex-grow: 0; /*禁止按钮自动变大*/
+}
+
+.btn-copy:hover {
+    background-color: #5a6268;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 90px;
+    background-color: #e9ecef;
+    color: #3d464d;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 1.05em; /*稍大命令框字体*/
+}
+
+/*命令框更新高亮*/
+@keyframes highlight-flash-anim {
+    0% { background-color: #fff6b0; }
+    100% { background-color: #e9ecef; }
+}
+
+.highlight-flash {
+    animation: highlight-flash-anim 1.5s ease-in-out;
+}

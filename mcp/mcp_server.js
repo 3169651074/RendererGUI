@@ -33,17 +33,38 @@ const server = new McpServer({
 });
 
 //注册服务器工具
+server.tool("StartRenderer", "Start renderer",
+    async () => {
+        console.error("Start renderer form MCP");
+        if (process.send != null) {
+            process.send({type: "StartRenderer", payload: null});
+            console.error(`Sent command start renderer to main process via IPC.`);
+        } else {
+            console.error("IPC channel not available. Cannot send command to main process.");
+        }
+    }
+);
+
+server.tool("StopRenderer", "Stop renderer",
+    async () => {
+        console.error("Stop renderer form MCP");
+        if (process.send != null) {
+            process.send({type: "StopRenderer", payload: null});
+            console.error(`Sent command stop renderer to main process via IPC.`);
+        } else {
+            console.error("IPC channel not available. Cannot send command to main process.");
+        }
+    }
+);
+
 server.tool("SendCommand", "Sending command to renderer",
     {command: zod.string().describe("Command sending to renderer")},
     async ({command}) => {
-        console.error(`Received command "${command}" via MCP.`);
+        console.error("Sending command", command, "form MCP");
 
         //检查IPC通道是否存在，并通过它将命令发送给父进程
-        if (process.send) {
-            process.send({
-                type: "send-command-from-mcp",
-                payload: command
-            });
+        if (process.send != null) {
+            process.send({type: "SendCommand", payload: command});
             console.error(`Sent command "${command}" to main process via IPC.`);
         } else {
             console.error("IPC channel not available. Cannot send command to main process.");

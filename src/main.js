@@ -164,10 +164,25 @@ function startMCPServer() {
 
             //监听来自MCP服务器子进程的消息
             mcpServerProcess.on("message", (message) => {
-                if (message.type === "send-command-from-mcp" && message.payload) {
-                    console.log(`Received command from MCP server via IPC: "${message.payload}"`);
-                    // 直接调用发送命令的逻辑，但不通过Electron的IPC句柄，所以第一个参数为null
-                    sendCommand(null, message.payload);
+                //确保message是符合预期的对象
+                if (typeof message === "object" && message != null && "type" in message && "payload" in message) {
+                    switch (message.type) {
+                        case "SendCommand":
+                            console.log(`Received command from MCP server via IPC: "${message.payload}"`);
+                            //直接调用发送命令的逻辑
+                            sendCommand(null, message.payload);
+                            break;
+                        case "StartRenderer":
+                            console.log("Received command from MCP server via IPC: start renderer");
+                            startRenderer(null, configs.executablePath);
+                            break;
+                        case "StopRenderer":
+                            console.log("Received command from MCP server via IPC: stop renderer");
+                            startRenderer(null, configs.executablePath);
+                            break;
+                        default:
+                            console.log("Received unknown command from MCP server: type =", message.type);
+                    }
                 }
             });
 

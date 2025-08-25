@@ -72,6 +72,23 @@ server.tool("SendCommand", "Sending command to renderer",
     }
 );
 
+//更新当前值
+server.tool("UpdateUI", "Update values in the user interface which is ready to commit",
+    {
+        updates: zod.record(zod.string(), zod.union([zod.string(), zod.number(), zod.boolean()]))
+            .describe("An object where keys are the IDs of the form elements and values are the new values to set.")
+    },
+    async ({updates}) => {
+        console.error("Updating UI with values:", updates);
+        if (process.send != null) {
+            process.send({type: "UpdateUI", payload: updates});
+            console.error("Sent UI update command to main process via IPC.");
+        } else {
+            console.error("IPC channel not available. Cannot send command to main process.");
+        }
+    }
+);
+
 //主函数
 async function main() {
     const transport = new StdioServerTransport();

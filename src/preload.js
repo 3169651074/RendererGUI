@@ -24,4 +24,8 @@ function showDialog(type, title, content) {
     ipc.send("show-dialog", type, title, content);
 }
 
-bridge.exposeInMainWorld("renderer", {sendCommand, startRenderer, stopRenderer, showDialog});
+function updateUI(updates) {
+    ipc.on("update-ui-values", (event, ...args) => updates(...args));
+}
+
+bridge.exposeInMainWorld("renderer", {sendCommand, startRenderer, stopRenderer, showDialog, updateUI});

@@ -5,8 +5,12 @@ const configs = {
     //是否最大化窗口
     isMaximize: false,
 
+    //窗口初始大小
     windowWidth: 1600,
-    windowHeight: 900
+    windowHeight: 900,
+
+    //API地址
+    apiAddress: "https://www.chataiapi.com/v1/chat/completions"
 };
 
 //导出configs对象中的属性

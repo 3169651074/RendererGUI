@@ -254,6 +254,21 @@ function addListeners() {
     });
 }
 
+function updateFormValues(updates) {
+    console.log("Received UI updates:", updates);
+    for (const id in updates) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = updates[id];
+        }
+    }
+
+    //检查是否有任何颜色输入框被更新
+    if ('bg-color-r' in updates || 'bg-color-g' in updates || 'bg-color-b' in updates) {
+        updateColorPickerAndBackground();
+    }
+}
+
 //当文档加载完成后执行渲染函数
 document.addEventListener("DOMContentLoaded", () => {
     getDOMElements();
@@ -265,4 +280,9 @@ document.addEventListener("DOMContentLoaded", () => {
         parseInt(colorGInput.value, 10),
         parseInt(colorBInput.value, 10)
     );
+
+    //注册监听器以接收来自主进程的UI更新
+    if (window.renderer != null && typeof window.renderer.updateUI === "function") {
+        window.renderer.updateUI(updateFormValues);
+    }
 });

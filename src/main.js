@@ -178,7 +178,16 @@ function startMCPServer() {
                             break;
                         case "StopRenderer":
                             console.log("Received command from MCP server via IPC: stop renderer");
-                            startRenderer(null, configs.executablePath);
+                            stopRenderer();
+                            break;
+                        case "UpdateUI":
+                            //主进程接收来自mcp进程的更新UI信息，转发给渲染进程进行更新，message.payload为包含更新信息的对象
+                            console.log("Received UI update from MCP server, forwarding to renderer window.");
+                            if (win.webContents != null) {
+                                win.webContents.send("update-ui-values", message.payload);
+                            } else {
+                                console.log("Cannot notify render process because win.webContents is null!");
+                            }
                             break;
                         default:
                             console.log("Received unknown command from MCP server: type =", message.type);

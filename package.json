@@ -2,7 +2,7 @@
   "name": "renderergui",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron ."
   },
@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cnpm": "^9.4.0"
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "cnpm": "^9.4.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "electron": "latest"

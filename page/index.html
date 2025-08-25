@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray Tracer Command Builder</title>
+    <!--内容安全策略-->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: ; font-src 'self';">
+    <!--在添加元素前引入CSS，在最后引入JS-->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Ray Tracer Settings</h1>
+<div class="container">
+    <div class="form-columns">
+        <div class="form-column column-left">
+            <div class="form-group">
+                <label for="resolution-presets">Window Resolution:</label>
+                <select id="resolution-presets">
+                    <option value="1920x1080">Default:1920x1080 (Full HD)</option>
+                    <option value="852x480">852x480 (SD 0.5K)</option>
+                    <option value="1280x720">1280x720 (HD 720p)</option>
+                    <option value="1366x768">1366x768 (HD)</option>
+                    <option value="1600x900">1600x900 (HD+)</option>
+                    <option value="1920x1080">1920x1080 (Full HD 1080p)</option>
+                    <option value="2048x1080">2048x1080 (DCI 2K)</option>
+                    <option value="2560x1440">2560x1440 (QHD 2K)</option>
+                    <option value="3200x1800">3200x1800 (QHD+)</option>
+                    <option value="3440x1440">3440x1440 (UltraWide QHD)</option>
+                    <option value="3840x2160">3840x2160 (4K UHD)</option>
+                    <option value="4096x2160">4096x2160 (DCI 4K)</option>
+                </select>
+                <div class="input-group resolution-manual-group">
+                    <input type="number" id="resolution-x" placeholder="Width" value="1920">
+                    <input type="number" id="resolution-y" placeholder="Height" value="1080">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bg-color-r">Background Color (0-255):</label>
+                <div class="input-group color-group">
+                    <input type="number" id="bg-color-r" placeholder="R" min="0" max="255" step="1" value="179">
+                    <input type="number" id="bg-color-g" placeholder="G" min="0" max="255" step="1" value="204">
+                    <input type="number" id="bg-color-b" placeholder="B" min="0" max="255" step="1" value="229">
+                    <input type="color" id="bg-color-picker" value="#B3CCE5">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="camera-up">Camera Up Direction:</label>
+                <select id="camera-up">
+                    <option value="x">X-axis</option>
+                    <option value="y" selected>Y-axis</option>
+                    <option value="z">Z-axis</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-column column-right">
+            <div class="form-group">
+                <label for="fov">Field of View (FOV):</label>
+                <input type="number" id="fov" placeholder="FOV" value="90">
+            </div>
+            <div class="form-group">
+                <label for="samples-per-pixel">Samples Per Pixel:</label>
+                <input type="number" id="samples-per-pixel" placeholder="Samples" value="100">
+            </div>
+            <div class="form-group">
+                <label for="max-depth">Max Recursion Depth:</label>
+                <input type="number" id="max-depth" placeholder="Depth" value="50">
+            </div>
+        </div>
+    </div>
+
+    <button id="generate-btn" class="btn-primary">Generate Command</button>
+
+    <div class="output-group">
+        <div class="output-label-group">
+            <label for="output-command">Generated Command:</label>
+            <button id="copy-btn" class="btn-copy">Copy</button>
+        </div>
+        <textarea id="output-command" placeholder="Your generated command will appear here"></textarea>
+    </div>
+
+    <div class="button-group">
+        <button id="reset-btn" class="btn-danger">Reset</button>
+        <button id="commit-btn" class="btn-success">Commit</button>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

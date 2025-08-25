@@ -225,10 +225,10 @@ function addListeners() {
                 }, 2000);
             }).catch(err => {
                 console.error("Failed to copy text: ", err);
-                alert("Failed to copy command.");
+                renderer.showDialog("error", "Error", "Failed to copy command.");
             });
         } else {
-            alert("Please generate a command first.");
+            renderer.showDialog("info", "Info", "Please generate a command first.");
         }
     });
 
@@ -240,9 +240,11 @@ function addListeners() {
              * sendCommand返回Promise，使用try catch进行处理
              */
             const result = await renderer.sendCommand(outputTextarea.value + " && commit");
-            alert(result);
+            if (result !== "OK") {
+                renderer.showDialog("error", "Error", result.toString());
+            }
         } else {
-            alert("Please generate a command first.");
+            renderer.showDialog("info", "Info", "Please generate a command first.");
         }
     });
 

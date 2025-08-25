@@ -20,4 +20,8 @@ function stopRenderer() {
     return ipc.invoke("stop-renderer");
 }
 
-bridge.exposeInMainWorld("renderer", {sendCommand, startRenderer, stopRenderer});
+function showDialog(type, title, content) {
+    ipc.send("show-dialog", type, title, content);
+}
+
+bridge.exposeInMainWorld("renderer", {sendCommand, startRenderer, stopRenderer, showDialog});

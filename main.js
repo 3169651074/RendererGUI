@@ -13,6 +13,9 @@
  */
 console.log("Starting main process.");
 
+//导入设置
+const configs = require("./config.js");
+
 //导入 Electron 主模块
 const electron = require("electron");
 
@@ -23,9 +26,13 @@ const childProcess = require("child_process");
 //提取对象
 const app = electron.app;
 const window = electron.BrowserWindow;
+const dialog = electron.dialog;
 const ipc = electron.ipcMain;
 
 console.log("Modules imported.");
+
+//当前窗口对象
+let win = null;
 
 //子进程对象变量
 let rendererProcess = null;
@@ -59,7 +66,7 @@ function startRenderer(event, executablePath) {
             });
 
             rendererProcess.once("exit", (code, signal) => {
-                console.log("Child process exited: code = ${code}, signal = ${signal}");
+                console.log(`Child process exited: code = ${code}, signal = ${signal}`);
                 rendererProcess = null;
             });
 
@@ -109,17 +116,22 @@ function sendCommand(event, command) {
         rendererProcess.stdin.write(command + "\n");
 
         //此处的返回值将成为script.js中sendCommand函数的返回值
-        return "Command sent: " + command;
+        return "OK";
     } else {
         return "Failed to send command: Renderer process is not available.";
     }
 }
 
+//展示弹窗，解决alert不支持自定义弹窗标题的问题
+function showDialog(event, type, title, content) {
+    dialog.showMessageBox(win, {type: type, title: title, message: content}).then(r => { console.log("Message confirmed"); });
+}
+
 function createWindow() {
-    const win = new window({
+    win = new window({
         title: "Renderer Configurator",
-        width: 1600,
-        height: 900,
+        width: configs.windowWidth,
+        height: configs.windowHeight,
         //禁用自带菜单栏
         autoHideMenuBar: true,
         //允许最大化
@@ -134,6 +146,7 @@ function createWindow() {
     ipc.handle("send-command", sendCommand);
     ipc.handle("start-renderer", startRenderer);
     ipc.handle("stop-renderer", stopRenderer);
+    ipc.on("show-dialog", showDialog);
 
     //渲染HTML页面
     win.loadFile("./pages/index.html").then(r => {
@@ -142,14 +155,18 @@ function createWindow() {
     });
 
     //最大化窗口
-    //win.maximize();
+    if (configs.isMaximize) {
+        win.maximize();
+    }
 
     //启动渲染器进程
-    startRenderer(null, "E:\\Code\\C++Test\\bin\\C++Test.exe").then(result => {
+    startRenderer(null, configs.executablePath).then(result => {
         console.log("Child process started.");
     }).catch(error => {
         console.log("Failed to start child process:", error);
-        //终止整个进程
+        dialog.showErrorBox("Failed to start child process",  `Error message：${error.message || error}`);
+
+        //在点击弹窗的确定后终止整个进程
         app.quit();
     });
 }

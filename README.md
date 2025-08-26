@@ -20,6 +20,8 @@ cnpm i -D electron@latest
 cnpm install @modelcontextprotocol/sdk zod@3 dotenv
 ```
 
+**库安装完成后，如果移动了项目文件夹，请删除node_modules文件夹、package.json、package-lock.json并重新执行安装步骤**
+
 ## Config
 在启动前，需要配置可执行文件路径和大模型环境
 * 在项目根目录下创建 .env 文件，使用文本编辑器打开，在文件开头写入以下内容

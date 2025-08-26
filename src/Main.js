@@ -28,7 +28,7 @@ console.log = function (...args) {
 console.log("Starting main process.");
 
 //导入设置
-const configs = require("../config.js");
+const configs = require("../Config.js");
 
 //导入 Electron 主模块
 const electron = require("electron");
@@ -158,7 +158,7 @@ function startMCPServer() {
         try {
             console.log("Starting MCP Server process...");
             //在stdio中添加"ipc"来启用父子进程通信
-            mcpServerProcess = childProcess.spawn("node", [path.join(__dirname, "../mcp/mcp_server.js")], {
+            mcpServerProcess = childProcess.spawn("node", [path.join(__dirname, "../mcp/MCPServer.js")], {
                 stdio: ["inherit", "inherit", "inherit", "ipc"]
             });
 
@@ -247,7 +247,7 @@ function createWindow() {
         maximizable: true,
         //指定预加载脚本
         webPreferences: {
-            preload: path.resolve(__dirname, "./preload.js"),
+            preload: path.resolve(__dirname, "./Preload.js"),
         }
     });
 
@@ -258,7 +258,7 @@ function createWindow() {
     ipc.on("show-dialog", showDialog);
 
     //渲染HTML页面
-    win.loadFile("page/index.html").then(r => {
+    win.loadFile("./page/Index.html").then(r => {
         console.log("Page load complete");
         console.log("Node version:", process.versions.node, ", Chrome version:", process.versions.chrome, ", Electron version:", process.versions.electron);
     });

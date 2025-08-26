@@ -19,7 +19,7 @@ const readline = require("readline");
 require("dotenv").config();
 
 //mcp变量
-const serverScriptPath = "./mcp_server.js";
+const serverScriptPath = "./MCPServer.js";
 
 const client = new McpClient({
     name: "client", version: "1.0.0"

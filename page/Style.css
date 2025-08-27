@@ -1,107 +1,78 @@
+/*
+元素选择器：选择所有指定标签名的元素
+  p { color: red; } 选中所有 <p> 元素
+
+类选择器：选择所有 class 属性为指定值的元素
+  .myclass { font-weight: bold; } 选中 class="myclass" 的元素
+
+ID 选择器：选择 id 属性为指定值的元素。每个 id 在页面中应唯一
+  #header { background: blue; } 选中 id="header" 的元素
+
+组合选择器：
+  .container p 选中 class="container" 内的所有 <p>
+
+伪类选择器：
+  :hover 鼠标悬停时
+  :active 被点击时
+  :focus 获得焦点时
+  :first-child 第一个子元素
+  :last-child 最后一个子元素
+  :nth-child(n) 第 n 个子元素
+
+通配选择器 * 选择页面所有元素
+分组选择器：h1, h2, h3 { color: navy; } 逗号分隔，选中多个类型元素。
+*/
+
+/*整个页面*/
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /*默认背景颜色，在调整过程中由JS实时更新*/
-    background-color: #B3CCE5;
-    color: #333;
+    /*设置元素的字体，依次查找，sans-serif为通用字体*/
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    /*使用FlexBox*/
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    /*让元素的内容距离边框有 40 像素的空间*/
     padding: 40px;
+    /*让元素至少和整个屏幕一样高，内容多可以撑开，高度不会低于一屏。vh：viewport height*/
     min-height: 100vh;
     box-sizing: border-box;
     /*平滑颜色变化*/
     transition: background-color 0.5s ease;
     /*禁用右侧滚动条*/
     overflow: hidden;
+    background: #f0f2f5; /* 添加一个柔和的背景色 */
 }
 
+/*标题*/
 h1 {
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    /*阴影在水平方向向右偏移 1 像素，在垂直方向向下偏移 1 像素，模糊半径为2px，数值越大越模糊，颜色为黑色，透明度为 0.2*/
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     /*平滑颜色变化*/
     transition: color 0.5s ease, text-shadow 0.5s ease;
+    color: #ffffff; /* 设置标题颜色 */
+    margin-bottom: 25px; /* 标题和容器之间的间距 */
 }
 
+/*所有内容*/
 .container {
     background-color: rgba(255, 255, 255, 0.9);
+    /*所有内容离边界30px*/
     padding: 30px;
+    /*圆角边界转角*/
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /*设置元素宽度为其父容器的 100%*/
     width: 100%;
-    max-width: 900px; /*横向页面*/
+    /*即使父容器很宽，元素也不会超过 900px。如果父容器小于 900px，元素宽度会跟随父容器缩小。*/
+    max-width: 900px;
+    /*对元素背后的内容应用模糊效果，模糊半径为 5px*/
     backdrop-filter: blur(5px);
 }
 
-.form-columns {
-    display: flex;
-    gap: 30px; /*两列之间的间隔*/
-    margin-bottom: 20px;
-}
-
-.form-column {
-    flex: 1; /*每列所用空间相同*/
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #005a70;
-}
-
-.input-group {
-    display: flex;
-    gap: 10px;
-}
-
-.resolution-manual-group {
-    margin-top: 10px;
-}
-
-.color-group {
-    align-items: center;
-}
-
-.color-group input[type="number"] {
-    flex: 1;
-}
-
-.color-group input[type="color"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 45px;
-    height: 45px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-}
-
-.color-group input[type="color"]::-webkit-color-swatch {
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.color-group input[type="color"]::-moz-color-swatch {
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.input-group input {
-    width: 100%;
-}
-
-input[type="number"],
-select,
-textarea {
+/*通用设置*/
+/*数字输入框*/
+input[type="number"], select, textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -110,25 +81,14 @@ textarea {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input[type="number"]:focus,
-select:focus,
-textarea:focus {
+/*被聚焦时的数字输入框*/
+input[type="number"]:focus, select:focus, textarea:focus {
     outline: none;
     border-color: #2193b0;
     box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
 }
 
-#generate-btn {
-    width: 100%;
-}
-
-/*提交、取消按钮*/
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
+/*按钮*/
 button {
     flex-grow: 1;
     padding: 12px 15px;
@@ -141,67 +101,208 @@ button {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-button:hover {
-    transform: translateY(-2px);
-}
-
-.btn-primary { background-color: #007bff; }
-.btn-primary:hover { background-color: #0056b3; }
-
-.btn-success { background-color: #28a745; }
-.btn-success:hover { background-color: #1e7e34; }
-
-.btn-danger { background-color: #dc3545; }
-.btn-danger:hover { background-color: #b02a37; }
-
-.btn-warning { background-color: #fd7e14; }
-.btn-warning:hover { background-color: #e56700; }
-
-
-.output-group {
-    margin-top: 20px;
-}
-
-.output-label-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.output-label-group label {
-    margin-bottom: 0;
-    font-weight: bold;
-    color: #005a70;
-}
-
-.btn-copy {
-    background-color: #6c757d;
-    padding: 4px 10px;
-    font-size: 12px;
-    flex-grow: 0; /*禁止按钮自动变大*/
-}
-
-.btn-copy:hover {
-    background-color: #5a6268;
-}
-
+/*文本框*/
 textarea {
     resize: vertical;
     min-height: 90px;
     background-color: #e9ecef;
     color: #3d464d;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-weight: bold;
-    font-size: 1.05em; /*稍大命令框字体*/
+    /*稍大命令框字体（1.05倍）*/
+    font-size: 1.05em;
+}
+
+/*被点击时的按钮，向下平移1px*/
+button:hover {
+    transform: translateY(1px);
+}
+
+/*设置区域，包含左右两列*/
+.form-columns {
+    /*此容器内部的元素使用flexbox*/
+    display: flex;
+    /*两列之间的间隔*/
+    gap: 30px;
+    /*底部的外边距（margin）为 20 像素*/
+    margin-bottom: 20px;
+}
+
+/*所有以 "column-" 开头的类名，用于左右两列*/
+[class*="column-"] {
+    display: flex;
+    /*让元素自动分配剩余空间，在容器里均匀伸展*/
+    flex: 1;
+    /*按列排列*/
+    flex-direction: column;
+    /*列内元素的垂直间距*/
+    gap: 10px;
+}
+
+/*表单内每个设置项的容器*/
+.form-group {
+    /*相邻设置项直接的间隔*/
+    margin-bottom: 20px;
+}
+
+/*单独设置提示词*/
+.form-group label {
+    display: block;
+    /*提示词和输入框之间的间隙*/
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #005a70;
+}
+
+.resolution-custom-input {
+    display: flex;
+    flex: 1;
+    /*width和height输入框间隙*/
+    gap: 5px;
+    margin-top: 10px;
+}
+
+/*width和height输入框之间的x号*/
+.resolution-custom-input-spliter {
+    font-weight: bold;
+    color: #005a70;
+    position: relative;
+    top: 7px;
+}
+
+/*背景颜色*/
+.background-color-custom-input {
+    display: flex;
+    /*相邻颜色输入框间隙*/
+    gap: 5px;
+    align-items: center;
+}
+
+/*将文字下移2px*/
+.background-color-custom-input label {
+    position: relative;
+    top: 2px;
+}
+
+#R {
+    color: #fd1919;
+}
+
+#G {
+    color: green;
+}
+
+#B {
+    color: #2b2bff;
+}
+
+/*使得颜色选择器能够以正方形正常显示*/
+.background-color-custom-input input[type="number"] {
+    flex: 1;
+}
+
+/*颜色选择器*/
+.background-color-custom-input input[type="color"] {
+    /*移除浏览器默认的 UI 样式*/
+    /*针对 WebKit 核心的浏览器（如 Chrome、Safari）*/
+    -webkit-appearance: none;
+    /*通用属性*/
+    appearance: none;
+
+    width: 45px;
+    height: 45px;
+    background-color: transparent;
+    border: none;
+    /*当鼠标悬停在输入框上时，光标会变成一个手型*/
+    cursor: pointer;
+    /*移除默认的内边距，让色块覆盖整个边框*/
+    padding: 0;
+}
+
+/*使用伪元素来修改颜色选择器中那个实际显示颜色的色块*/
+/*WebKit 浏览器特有的伪元素::-webkit-color-swatch，用来选中颜色选择器的色块*/
+.background-color-custom-input input[type="color"]::-webkit-color-swatch {
+    /*为色块添加圆角，使其看起来更柔和*/
+    border-radius: 8px;
+    /*为色块添加一个 1 像素宽的灰色边框，即使选择白色或透明，色块也依然可见*/
+    border: 1px solid #ccc;
+}
+
+/*Mozilla 浏览器特有的伪元素::-moz-color-swatch*/
+.background-color-custom-input input[type="color"]::-moz-color-swatch {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/*生成命令按钮*/
+#generate-command-button {
+    /*让按钮占满一行*/
+    width: 100%;
+    background-color: #0184ed;
+}
+
+.output-button {
+    display: flex;
+    flex: 1;
+    /*reset和commit之间的间距*/
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#reset-button {
+    background-color: #d8263f;
+}
+
+#commit-button {
+    background-color: #52b310;
+}
+
+.output {
+    /*文本框、copy按钮和上方生成命令按钮的间隔*/
+    margin-top: 20px;
+}
+
+/*Generated Command标签文本和copy按钮*/
+.output-label {
+    display: flex;
+    /*将 第一个子元素靠左对齐，最后一个子元素靠右对齐，并且在它们之间平均分配剩余空间*/
+    justify-content: space-between;
+    /*将所有子元素 垂直居中对齐，确保它们在同一条水平线上*/
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/*Generated Command标签文本*/
+.output-label label {
+    /*覆盖 <label> 元素可能存在的默认底部外边距，确保它与容器的 align-items: center 属性协同工作，避免额外的垂直间距*/
+    margin-bottom: 0;
+    font-weight: bold;
+    color: #005a70;
+}
+
+/*复制按钮*/
+#copy-button {
+    background-color: #6c757d;
+    /*文字和边框之间的上下、左右间隔*/
+    padding: 4px 10px;
+    font-size: 12px;
+    /*禁止按钮自动变大*/
+    flex-grow: 0;
+}
+
+#copy-button:hover {
+    background-color: #5a6268;
 }
 
 /*命令框更新高亮*/
+/*@keyframes 规则定义了动画的关键帧*/
 @keyframes highlight-flash-anim {
     0% { background-color: #fff6b0; }
     100% { background-color: #e9ecef; }
 }
 
+/*将以上定义的动画应用到类名为highlight-flash的元素上*/
 .highlight-flash {
+    /*highlight-flash-anim为动画名称*/
     animation: highlight-flash-anim 1.5s ease-in-out;
 }

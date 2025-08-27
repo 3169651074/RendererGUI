@@ -15,7 +15,7 @@ npm i cnpm
 cnpm i -D electron@latest
 ```
 
-3. 安装MCP SDK和AI有关库
+3. 安装MCP SDK和辅助库
 ```
 cnpm install @modelcontextprotocol/sdk zod@3 dotenv
 ```

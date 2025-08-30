@@ -1,0 +1,88 @@
+/*包裹原有两列和按钮的容器*/
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 2; /*让左侧内容区占据约2/3宽度*/
+}
+
+/*包裹左侧和右侧设置列的容器*/
+.columns-wrapper {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+/*对话框列*/
+.column-chat {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px; /*设置一个最小宽度，防止过窄*/
+}
+
+.column-chat label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #005a70;
+}
+
+/*聊天消息显示区域*/
+.chat-messages {
+    flex-grow: 1; /*占据所有可用的垂直空间*/
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    overflow-y: auto; /*当内容溢出时显示垂直滚动条*/
+    margin-bottom: 15px;
+}
+
+/*聊天输入区域容器*/
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+/*聊天输入文本框*/
+.chat-input-area textarea {
+    flex-grow: 1; /*占据可用空间*/
+    min-height: 85px; /*初始最小高度*/
+    resize: vertical;
+}
+
+.chat-buttons {
+    display: flex;
+    /*按钮间隔*/
+    gap: 10px;
+    align-items: center;
+    /*和聊天区域的间隔*/
+    margin-top: 10px;
+
+    transition: color 0.5s ease;
+}
+
+/*连接状态圆点*/
+#connection-status {
+    height: 12px;
+    width: 12px;
+    background-color: #bbb;
+    /*圆形*/
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/*发送按钮*/
+#chat-send-button {
+    flex-grow: 1;
+    background-color: #c551ff;
+    padding: 12px 15px;
+    font-size: 16px;
+}
+
+/*检查连接按钮*/
+#check-connect-button {
+    flex-grow: 1;
+    background-color: #a8aeae;
+    padding: 12px 15px;
+    font-size: 16px;
+}

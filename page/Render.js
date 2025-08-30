@@ -1,62 +1,42 @@
 // ====== 全局对象变量 ======
 
-let body = null;
-let title = null;
+let body = document.body.style;
+let title = document.querySelector("h1").style;
 
 //分辨率
-let resolutionPresetsForm = null;
-let resolutionWidthInput = null;
-let resolutionHeightInput = null;
+let resolutionPresetsForm = document.getElementById("resolution-presets");
+let resolutionWidthInput = document.getElementById("resolution-width");
+let resolutionHeightInput = document.getElementById("resolution-height");
 
 //背景颜色
-let backgroundColorRInput = null;
-let backgroundColorGInput = null;
-let backgroundColorBInput = null;
-let backgroundColorPicker = null;
+let backgroundColorRInput = document.getElementById("background-color-r");
+let backgroundColorGInput = document.getElementById("background-color-g");
+let backgroundColorBInput = document.getElementById("background-color-b");
+let backgroundColorPicker = document.getElementById("background-color-picker");
 
 //相机基准方向
-let cameraUpForm = null;
+let cameraUpForm = document.getElementById("camera-up");
 
 //FOV, SPP, 最大追踪深度
-let fovInput = null;
-let sppInput = null;
-let maxDepthInput = null;
+let fovInput = document.getElementById("fov");
+let sppInput = document.getElementById("samples-per-pixel");
+let maxDepthInput = document.getElementById("max-depth");
 
 //按钮
-let generateCommandButton = null;
-let resetButton = null;
-let commitButton = null;
-let copyButton = null;
+let generateCommandButton = document.getElementById("generate-command-button");
+let resetButton = document.getElementById("reset-button");
+let commitButton = document.getElementById("commit-button");
+let copyButton = document.getElementById("copy-button");
 
 //命令文本框
-let outputTextarea = null;
+let outputTextarea = document.getElementById("output-command-textarea");
+
+//对话框
+let chatInputTextarea = document.getElementById("chat-input");
+let checkConnectionButton = document.getElementById("check-connect-button");
+let sendButton = document.getElementById("chat-send-button");
 
 // ====== 页面渲染函数 ======
-
-function getElements() {
-    body = document.body.style;
-    title = document.querySelector("h1").style;
-
-    resolutionPresetsForm = document.getElementById("resolution-presets");
-    resolutionWidthInput = document.getElementById("resolution-width");
-    resolutionHeightInput = document.getElementById("resolution-height");
-
-    backgroundColorRInput = document.getElementById("background-color-r");
-    backgroundColorGInput = document.getElementById("background-color-g");
-    backgroundColorBInput = document.getElementById("background-color-b");
-    backgroundColorPicker = document.getElementById("background-color-picker");
-
-    cameraUpForm = document.getElementById("camera-up");
-    fovInput = document.getElementById("fov");
-    sppInput = document.getElementById("samples-per-pixel");
-    maxDepthInput = document.getElementById("max-depth");
-
-    generateCommandButton = document.getElementById("generate-command-button");
-    resetButton = document.getElementById("reset-button");
-    commitButton = document.getElementById("commit-button");
-    outputTextarea = document.getElementById("output-command-textarea");
-    copyButton = document.getElementById("copy-button");
-}
 
 function setDefaultValue() {
     body.backgroundColor = defaultBackgroundColor.hex;
@@ -75,6 +55,7 @@ function setDefaultValue() {
     fovInput.value = defaultFOV;
     sppInput.value = defaultSPP;
     maxDepthInput.value = defaultMaxDepth;
+    outputTextarea.value = "";
 }
 
 //为DOM元素添加监听器
@@ -125,20 +106,19 @@ function addListeners() {
                         sppInput, maxDepthInput, cameraUpForm);
     });
 
-    //TODO 复制命令按钮
+    //复制命令按钮
     copyButton.addEventListener("click", () => {
         const commandText = outputTextarea.value;
-        if (commandText) {
+        if (commandText !== "") {
             //向剪切板中写入命令字符串
             navigator.clipboard.writeText(commandText).then(() => {
                 //复制成功
                 copyButton.textContent = "Copied!";
-                //恢复远洋
+                //恢复原样
                 setTimeout(() => {
                     copyButton.textContent = "Copy";
                 }, 2000);
             }).catch(err => {
-                console.error("Failed to copy text: ", err);
                 //显示失败对话框
                 mainProcess.showDialog("error", "Error", "Failed to copy command.");
             });
@@ -151,24 +131,32 @@ function addListeners() {
     //重置按钮
     resetButton.addEventListener("click", () => {
         setDefaultValue();
-        outputTextarea.value = "";
     });
 
-    //TODO 提交按钮
+    //提交按钮
     commitButton.addEventListener("click", async () => {
-        console.log("Commit button clicked. Command to send:", outputTextarea.value);
-        if (outputTextarea.value) {
+        if (outputTextarea.value !== "") {
             /*
              * 发送命令到主进程，由主进程发往渲染器
              * sendCommand返回Promise，需要await
+             * result就是RendererProcess.sendCommand函数的返回值，为一个字符串
              */
             const result = await mainProcess.sendCommand(outputTextarea.value + " && commit");
             if (result !== "OK") {
-                mainProcess.showDialog("error", "Error", result.toString());
+                mainProcess.showDialog("error", "Error", result);
+            } else {
+                const originText = commitButton.innerText;
+                commitButton.innerText = "Success!";
+                setTimeout(() => {commitButton.innerText = originText;}, 2000);
             }
         } else {
             mainProcess.showDialog("info", "Info", "Please generate a command first.");
         }
+    });
+
+    //检查连接按钮
+    checkConnectionButton.addEventListener("click", () => {
+        mainProcess.checkConnection();
     });
 
     //监听动画结束事件，移除动画类，以便下次可以重新触发
@@ -178,7 +166,6 @@ function addListeners() {
 }
 
 function main() {
-    getElements();
     setDefaultValue();
     addListeners();
 

@@ -32,16 +32,17 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /*让元素的内容距离边框有 40 像素的空间*/
-    padding: 40px;
+    padding: 0;
+    margin: 0;
     /*让元素至少和整个屏幕一样高，内容多可以撑开，高度不会低于一屏。vh：viewport height*/
     min-height: 100vh;
+    min-width: 100vw;
     box-sizing: border-box;
     /*平滑颜色变化*/
     transition: background-color 0.5s ease;
     /*禁用右侧滚动条*/
     overflow: hidden;
-    background: #f0f2f5; /* 添加一个柔和的背景色 */
+    flex-wrap: nowrap;
 }
 
 /*标题*/
@@ -51,10 +52,11 @@ h1 {
     /*平滑颜色变化*/
     transition: color 0.5s ease, text-shadow 0.5s ease;
     color: #ffffff; /* 设置标题颜色 */
-    margin-bottom: 25px; /* 标题和容器之间的间距 */
+    margin-bottom: 30px; /* 标题和容器之间的间距 */
+    margin-top: 20px;
 }
 
-/*所有内容*/
+/*设置页面所有内容*/
 .container {
     background-color: rgba(255, 255, 255, 0.9);
     /*所有内容离边界30px*/
@@ -62,12 +64,12 @@ h1 {
     /*圆角边界转角*/
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    /*设置元素宽度为其父容器的 100%*/
-    width: 100%;
-    /*即使父容器很宽，元素也不会超过 900px。如果父容器小于 900px，元素宽度会跟随父容器缩小。*/
-    max-width: 900px;
     /*对元素背后的内容应用模糊效果，模糊半径为 5px*/
     backdrop-filter: blur(5px);
+    overflow: visible;
+    /*占整个页面的70%宽度*/
+    width: 70%;
+    min-width: 900px;
 }
 
 /*通用设置*/
@@ -113,9 +115,9 @@ textarea {
     font-size: 1.05em;
 }
 
-/*被点击时的按钮，向下平移1px*/
-button:hover {
-    transform: translateY(1px);
+/*被点击时的按钮，向下平移2px*/
+button:active {
+    transform: translateY(2px);
 }
 
 /*设置区域，包含左右两列*/
@@ -126,6 +128,8 @@ button:hover {
     gap: 30px;
     /*底部的外边距（margin）为 20 像素*/
     margin-bottom: 20px;
+    /*让子元素在交叉轴上拉伸以填充容器*/
+    align-items: stretch;
 }
 
 /*所有以 "column-" 开头的类名，用于左右两列*/
@@ -219,18 +223,17 @@ button:hover {
     padding: 0;
 }
 
-/*使用伪元素来修改颜色选择器中那个实际显示颜色的色块*/
-/*WebKit 浏览器特有的伪元素::-webkit-color-swatch，用来选中颜色选择器的色块*/
+/*
+使用伪元素来修改颜色选择器中那个实际显示颜色的色块
+
+伪元素（Pseudo-elements）：特殊的 CSS 选择器。允许选中并美化一个元素中特定的一部分，而这部分在 HTML 文档树中并不存在
+  WebKit 浏览器特有的伪元素::-webkit-color-swatch，用来选中颜色选择器的色块
+  Mozilla 浏览器特有的伪元素::-moz-color-swatch，在Electron应用中可省略
+*/
 .background-color-custom-input input[type="color"]::-webkit-color-swatch {
     /*为色块添加圆角，使其看起来更柔和*/
     border-radius: 8px;
     /*为色块添加一个 1 像素宽的灰色边框，即使选择白色或透明，色块也依然可见*/
-    border: 1px solid #ccc;
-}
-
-/*Mozilla 浏览器特有的伪元素::-moz-color-swatch*/
-.background-color-custom-input input[type="color"]::-moz-color-swatch {
-    border-radius: 8px;
     border: 1px solid #ccc;
 }
 

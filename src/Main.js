@@ -1,14 +1,33 @@
+/*
+ * 移动项目文件夹
+ * 1. 删除node_modules
+ * 2. 删除package.json
+ * 3. 删除package-lock.json
+ * 4. 删除.idea
+ * 5. npm init -y
+ * 6. 关闭代理
+ * 7. npm i cnpm
+ * 8. cnpm i -D electron@latest（必须在CMD中执行）
+ * 9. 在package.json中修改scripts为"start": "electron ." 修改main为"main": "src/Main.js",
+ * 10. cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript
+ */
+
 // ====== 导入设置 ======
+
 const configs = require("./Config.js");
+
+//子进程文件
+const rendererProcess = require("./RendererProcess.js");
+const mcpClientProcess = require("./MCPClient.js");
 
 //Electron主模块
 const electron = require("electron");
 
-//Node.js的路径和子进程模块
+//Node.js模块
 const path = require("path");
-const childProcess = require("child_process");
 
 // ====== 提取对象 ======
+
 const app = electron.app;
 const dialog = electron.dialog;
 const ipc = electron.ipcMain;
@@ -28,15 +47,17 @@ const template = [
         label: "Settings",
         submenu: [
             //展开/折叠对话框
-            {
-                label: "Toggle Chat Dialog",
-                accelerator: "Ctrl+C",
-                click() {
-                    console.log("Toggle Chat Dialog");
-                }
-            },
-            //分隔线
-            { type: "separator" },
+            // {
+            //     label: "Configure Chat Model",
+            //     accelerator: "Ctrl+C",
+            //     click() {
+            //         console.log("Configure Chat Model.");
+            //         //通知渲染进程
+            //         window.webContents.send("chat-container");
+            //     }
+            // },
+            // //分隔线
+            // { type: "separator" },
             //退出应用
             {
                 label: "Quit",
@@ -47,11 +68,13 @@ const template = [
     {
         label: "Page",
         submenu: [
+            //刷新
             { role: "reload" },
             { role: "forceReload" },
-            //开发者工具
+            //打开调试器
             { role: "toggleDevTools" },
             { type: "separator" },
+            //缩放页面
             { role: "resetZoom" },
             { role: "zoomIn" },
             { role: "zoomOut" },
@@ -75,7 +98,28 @@ const template = [
 
 // ====== 主逻辑函数 ======
 
-function createWindow() {
+//注册ipc监听
+function registerIPCChannel() {
+    ipc.on("show-dialog", (event, type, title, content) => {
+        console.log("Showing dialog: title =", title, ", content =", content);
+        dialog.showMessageBox(window, {type: type, title: title, message: content}).then(r => {
+            console.log("Message confirmed.");
+        });
+    });
+
+    ipc.handle("send-command", (event, command) => {
+        //传递返回值
+        return rendererProcess.sendCommand(command);
+    });
+
+    ipc.on("check-connection", (event) => {
+        console.log("Checking model connection...");
+    });
+}
+
+//初始化窗口
+async function createWindow() {
+    console.log("Creating window...");
     window = new BrowserWindow({
         title: "Renderer Configurator",
         width: configs.windowWidth,
@@ -90,11 +134,10 @@ function createWindow() {
         }
     });
 
-    //渲染HTML页面
-    window.loadFile("./page/Index.html").then(r => {
-        console.log("Page load complete");
-        console.log("Node version:", process.versions.node, ", Chrome version:", process.versions.chrome, ", Electron version:", process.versions.electron);
-    });
+    //渲染HTML页面，阻塞直到渲染完成
+    console.log("Loading HTML...");
+    await window.loadFile("./page/Index.html");
+    console.log("Finish loading HTML.");
 
     //最大化窗口
     if (configs.isMaximize) {
@@ -102,19 +145,48 @@ function createWindow() {
     }
 
     //设置菜单栏
+    console.log("Setting menubar...");
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
+
+    //注册IPC
+    console.log("Registering IPC...");
+    registerIPCChannel();
 }
 
-function main() {
-    console.log("Starting main process.");
+//等待准备完成
+function waitAppReady() {
+    return new Promise(resolve => {
+        if (app.isReady()) {
+            resolve();
+        } else {
+            app.once("ready", resolve);
+        }
+    });
+}
 
-    //准备完成时创建窗口
-    app.on("ready", createWindow);
+//清理资源
+function cleanUp() {
+    //确保子进程停止
+    rendererProcess.stopRenderer();
+    mcpClientProcess.stopClient();
+
+    app.quit();
+}
+
+async function main() {
+    console.log("Versions:\n\tNode.js version:", process.versions.node, "\n\tChrome version:", process.versions.chrome, "\n\tElectron version:", process.versions.electron);
+    console.log("Starting main process...");
+
+    //准备完成时创建窗口，阻塞main方法
+    //app.on("ready", createWindow);
+    await waitAppReady();
+    await createWindow();
 
     //当所有窗口关闭时退出应用
     app.on("window-all-closed", () => {
-        app.quit();
+        console.log("Quit application due to window closed.");
+        cleanUp();
     });
 
     //当应用被激活时如果没有窗口则创建一个新窗口
@@ -123,4 +195,13 @@ function main() {
     });
 }
 
-main();
+main().then(() => {
+    console.log("Finish initializing window.");
+
+    //启动子进程
+    rendererProcess.startRenderer();
+    mcpClientProcess.startClient();
+    console.log("Sub process started.");
+});
+
+

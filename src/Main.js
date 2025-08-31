@@ -15,6 +15,8 @@
 // ====== 导入设置 ======
 
 const configs = require("./Config.js");
+require("./OutputReload.js");
+const chatService = require("./ChatService.js");
 
 //子进程
 const rendererProcess = require("./RendererProcess.js");
@@ -126,6 +128,10 @@ function registerIPCChannel() {
 
     ipc.handle("chat-message", async (event, content) => {
         console.log("Sending message", content, "to chat...");
+
+        //客户端使用readline进行读取，末尾需要换行符
+        //return mcpProcess.sendUserPrompt(content + "\n");
+        return await chatService.callAI(content);
     });
 }
 

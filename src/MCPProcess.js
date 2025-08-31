@@ -1,7 +1,7 @@
 //MCP进程管理函数，由主进程执行
 // ====== 导入配置和库 ======
 
-const configs = require("./Config.js");
+require("./OutputReload.js");
 const childProcess = require("child_process");
 const path = require("path");
 
@@ -29,20 +29,6 @@ function startMCPClient() {
             clientProcess = childProcess.spawn("node", [path.join(__dirname, clientScriptPath)], {
                 stdio: ["pipe", "pipe", "pipe"]
             });
-
-            // //TODO 监听来自MCP服务器进程的消息，从而实现MCP的功能
-            // clientProcess.on("message", (message) => {
-            //     //确保message是符合预期的对象
-            //     if (typeof message === "object" && message != null && "type" in message && "payload" in message) {
-            //         switch (message.type) {
-            //             case "SendCommand":
-            //                 console.log(`Received command from MCP server via IPC: "${message.payload}"`);
-            //                 break;
-            //             default:
-            //                 console.log("Received unknown command from MCP server: type =", message.type);
-            //         }
-            //     }
-            // });
 
             clientProcess.once("spawn", () => {
                 console.log("MCP Client process started.")
@@ -91,8 +77,38 @@ function stopMCPClient() {
     }
 }
 
-// ====== MCP服务器 ======
+//等待客户端返回调用结果
+function waitForMessage() {
+    return new Promise((resolve, reject) => {
+        clientProcess.stdout.on("data", (data) => {
+            const message = data.toString().trim();
+            //收到特定消息，Promise完成
+            if (message.startsWith("[OK]")) {
+                resolve(message);
+            } else if (message.startsWith("[Error]")) {
+                reject(message);
+            }
+        });
+    });
+}
 
+//向客户端发送用户提示词
+async function sendUserPrompt(content) {
+    if (clientProcess == null) {
+        throw new Error("Client process does not exist.");
+    }
+    if (!clientProcess.stdin.writable) {
+        throw new Error("Client stdin does not writable.");
+    }
+
+    //向客户端进程的stdin中写入后等待消息
+    clientProcess.stdin.write(content);
+    return await waitForMessage();
+}
+
+// ====== MCP服务器（通过StdioClientTransport启动服务器进程，以下函数不使用） ======
+
+//启动MCP服务器子进程
 function startMCPServer() {
     if (serverProcess != null && !serverProcess.killed) {
         return Promise.resolve(true);
@@ -164,4 +180,4 @@ function stopMCPServer() {
     }
 }
 
-module.exports = {startMCPClient, stopMCPClient, startMCPServer, stopMCPServer};
+module.exports = {startMCPClient, stopMCPClient, sendUserPrompt};

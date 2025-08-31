@@ -161,10 +161,17 @@ async function sendMessageToAI(message) {
         removeLoadingMessage();
 
         //添加AI回复
-        if (response && response.trim()) {
-            addMessageToChat(response, "ai");
+        if (response == null || typeof response !== "string" || response === "") {
+            addMessageToChat("Error: response message is an empty string.", "ai");
+            return;
+        }
+
+        if (response.startsWith("[OK]")) {
+            addMessageToChat(response.substring(4, response.length), "ai");
+        } else if (response.startsWith("[Error]")) {
+            addMessageToChat(`Error: ${response.substring(7, response.length)}`, "ai");
         } else {
-            addMessageToChat("Sorry, an error encountered while processing message.", "ai");
+            addMessageToChat("Received unknown response from call:", response);
         }
     } catch (error) {
         //移除加载状态

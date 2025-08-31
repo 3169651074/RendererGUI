@@ -114,25 +114,24 @@
     font-size: 16px;
 }
 
-/*=============*/
-/* 消息容器 */
+/*消息容器*/
 .message {
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
 }
 
-/* 用户消息（右对齐） */
+/*用户消息（右对齐）*/
 .message.user {
     align-items: flex-end;
 }
 
-/* AI消息（左对齐） */
+/*AI消息（左对齐）*/
 .message.ai {
     align-items: flex-start;
 }
 
-/* 消息气泡通用样式 */
+/*消息气泡通用样式*/
 .message-bubble {
     max-width: 80%;
     padding: 10px 15px;
@@ -144,14 +143,14 @@
     animation: fadeIn 0.3s ease-in;
 }
 
-/* 用户消息气泡样式 */
+/*用户消息气泡样式*/
 .message.user .message-bubble {
     background-color: #0184ed;
     color: white;
     border-bottom-right-radius: 5px;
 }
 
-/* AI消息气泡样式 */
+/*AI消息气泡样式*/
 .message.ai .message-bubble {
     background-color: #e9ecef;
     color: #333;
@@ -159,7 +158,7 @@
     border-bottom-left-radius: 5px;
 }
 
-/* 消息发送者标签 */
+/*消息发送者标签*/
 .message-sender {
     font-size: 12px;
     color: #6c757d;
@@ -167,14 +166,14 @@
     font-weight: bold;
 }
 
-/* 消息时间戳 */
+/*消息时间戳*/
 .message-time {
     font-size: 11px;
     color: #adb5bd;
     margin-top: 4px;
 }
 
-/* 消息淡入动画 */
+/*消息淡入动画*/
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -186,7 +185,7 @@
     }
 }
 
-/* 加载状态样式 */
+/*加载状态样式*/
 .loading-message {
     display: flex;
     align-items: center;

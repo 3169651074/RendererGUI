@@ -59,7 +59,7 @@ h1 {
 /*设置页面所有内容*/
 .container {
     background-color: rgba(255, 255, 255, 0.9);
-    /*所有内容离边界30px*/
+    /*所有内容离边界的距离*/
     padding: 30px;
     /*圆角边界转角*/
     border-radius: 12px;

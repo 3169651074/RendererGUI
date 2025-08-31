@@ -31,7 +31,7 @@ API_KEY=<your api key>
 将\<your api key>替换为实际的API Key，此 .env 文件已经被添加到了.gitignore中。
 
 * 在Config.js中配置大模型API地址和模型ID。如有需要，可配置网络代理。  
-* *请输入完整的API地址，如https://api.deepseek.com/v1/chat/completions而不是https://api.deepseek.com，可以使用Cherry Studio或官方文档确认*
+* *请输入完整的API地址，如`https://api.deepseek.com/v1/chat/completions`而不是`https://api.deepseek.com`，可以使用Cherry Studio或官方文档确认*
 * *如果使用DeepSeek模型，则不要使用Reasoner，思考模型不支持MCP调用*
 
 ## Run

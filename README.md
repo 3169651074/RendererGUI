@@ -17,7 +17,7 @@ cnpm i -D electron@latest
 
 3. 安装MCP SDK和辅助库
 ```
-cnpm install @modelcontextprotocol/sdk zod@3 dotenv
+cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript
 ```
 
 **库安装完成后，如果移动了项目文件夹，请删除node_modules文件夹、package.json、package-lock.json并重新执行安装步骤**
@@ -30,9 +30,13 @@ API_KEY=<your api key>
 ```
 将\<your api key>替换为实际的API Key，此 .env 文件已经被添加到了.gitignore中。
 
-* 在Config.js中配置大模型API地址和模型ID。如有需要，可配置网络代理。
+* 在Config.js中配置大模型API地址和模型ID。如有需要，可配置网络代理。  
+* *请输入完整的API地址，如https://api.deepseek.com/v1/chat/completions而不是https://api.deepseek.com，可以使用Cherry Studio或官方文档确认*
+* *如果使用DeepSeek模型，则不要使用Reasoner，思考模型不支持MCP调用*
 
 ## Run
+将package.json中"scripts"属性中的"test"一行替换为`"start": "electron ."`  
+然后运行命令
 ```
 npm start
 ```

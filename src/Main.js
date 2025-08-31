@@ -16,9 +16,10 @@
 
 const configs = require("./Config.js");
 
-//子进程文件
+//子进程
 const rendererProcess = require("./RendererProcess.js");
-const mcpClientProcess = require("./MCPClient.js");
+const mcpProcess = require("./MCPProcess.js");
+const checkConnection = require("./CheckConnection.js");
 
 //Electron主模块
 const electron = require("electron");
@@ -112,8 +113,19 @@ function registerIPCChannel() {
         return rendererProcess.sendCommand(command);
     });
 
-    ipc.on("check-connection", (event) => {
+    ipc.handle("check-connection", async (event) => {
         console.log("Checking model connection...");
+        const result = (await checkConnection.checkModelConnectionSendingMessage()).success; //等待异步结果
+        if (result) {
+            console.log("Connection check success.");
+        } else {
+            console.log("Connection check failed:", result.message);
+        }
+        return result;
+    });
+
+    ipc.on("chat-message", (event, content) => {
+        console.log("Sending message", content, "to chat...");
     });
 }
 
@@ -169,7 +181,8 @@ function waitAppReady() {
 function cleanUp() {
     //确保子进程停止
     rendererProcess.stopRenderer();
-    mcpClientProcess.stopClient();
+    mcpProcess.stopMCPClient();
+    //mcpProcess.stopMCPServer();
 
     app.quit();
 }
@@ -193,15 +206,15 @@ async function main() {
     app.on("activate", () => {
         if (window.getAllWindows().length === 0) { createWindow(); }
     });
+
+    //启动子进程
+    rendererProcess.startRenderer();
+    //mcpProcess.startMCPServer();
+    mcpProcess.startMCPClient();
 }
 
 main().then(() => {
     console.log("Finish initializing window.");
-
-    //启动子进程
-    rendererProcess.startRenderer();
-    mcpClientProcess.startClient();
-    console.log("Sub process started.");
 });
 
 

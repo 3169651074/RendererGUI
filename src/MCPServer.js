@@ -1,5 +1,6 @@
 // ====== 导入库 ======
 
+//const configs = require("./Config.js");
 const McpServer = require("@modelcontextprotocol/sdk/server/mcp.js").McpServer;
 const StdioServerTransport = require("@modelcontextprotocol/sdk/server/stdio.js").StdioServerTransport;
 const zod = require("zod").z;
@@ -8,7 +9,7 @@ const zod = require("zod").z;
 
 let server = null;
 
-// ====== 主逻辑函数 ======
+// ====== 服务器主逻辑函数 ======
 
 //工具执行函数
 function sendCommand(command) {
@@ -23,11 +24,9 @@ function getElementIDs() {
     console.error("Get the id of all input elements.");
 }
 
-//初始化服务器
-function initializeServer() {
+async function main() {
     console.error("Initializing MCP server...");
 
-    //创建MCP服务器对象
     server = new McpServer({
         name: "server",
         version: "1.0.0",
@@ -44,13 +43,14 @@ function initializeServer() {
         (id, value) => {configure(id, value);
     });
     server.tool("GetID", "Get the id of all available elements.", getElementIDs);
-}
 
-async function connect() {
-    initializeServer();
-
-    //启动服务器，捕获错误
+    //启动服务器
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error("MCP server is running on stdio");
+
+    console.error("Server connected.");
 }
+
+main().then(() => {
+    console.error("MCP Server is running on stdio.");
+});

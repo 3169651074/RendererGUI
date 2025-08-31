@@ -32,7 +32,8 @@ let copyButton = document.getElementById("copy-button");
 let outputTextarea = document.getElementById("output-command-textarea");
 
 //对话框
-let chatInputTextarea = document.getElementById("chat-input");
+let connectionStatus = document.getElementById("connection-status");
+let chatInputTextarea = document.getElementById("chat-input-textarea");
 let checkConnectionButton = document.getElementById("check-connect-button");
 let sendButton = document.getElementById("chat-send-button");
 
@@ -156,7 +157,25 @@ function addListeners() {
 
     //检查连接按钮
     checkConnectionButton.addEventListener("click", () => {
-        mainProcess.checkConnection();
+        connectionStatus.style.backgroundColor = "#f88e12";
+        checkConnectionButton.innerText = "Checking...";
+
+        mainProcess.checkConnection().then(result => {
+            if (result) {
+                connectionStatus.style.backgroundColor = "#52b310";
+                checkConnectionButton.innerText = "Success!";
+            } else {
+                connectionStatus.style.backgroundColor = "#d8263f";
+            }
+            setTimeout(() => {
+                checkConnectionButton.innerText = "Check Connection";
+            }, 3000);
+        });
+    });
+
+    //发送消息按钮
+    sendButton.addEventListener("click", () => {
+        mainProcess.sendMessageToChat(chatInputTextarea.value);
     });
 
     //监听动画结束事件，移除动画类，以便下次可以重新触发

@@ -16,7 +16,11 @@ function sendCommand(command) {
 }
 
 function checkConnection() {
-    ipc.send("check-connection");
+    return ipc.invoke("check-connection");
+}
+
+function sendMessageToChat(content) {
+    ipc.send("chat-message", content);
 }
 
 // ====== 向渲染进程转发 ======
@@ -28,7 +32,7 @@ function checkConnection() {
 // ====== 传递接口 ======
 
 bridge.exposeInMainWorld("mainProcess", {
-    showDialog, sendCommand, checkConnection
+    showDialog, sendCommand, checkConnection, sendMessageToChat
 });
 
 // bridge.exposeInMainWorld("renderProcess", {

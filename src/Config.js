@@ -16,11 +16,11 @@ const config = {
     executablePath: "E:\\Code\\C++Test\\bin\\C++Test.exe",
 
     //API地址
-    apiAddress: "https://www.chataiapi.com/v1/chat/completions",
+    apiAddress: "https://api.deepseek.com/v1/chat/completions",
     //从.env导入API Key
     apiKey: process.env.API_KEY,
     //模型ID
-    modelID: "claude-3-7-sonnet-20250219",
+    modelID: "deepseek-chat",
 
     //网络代理
     proxy: null,

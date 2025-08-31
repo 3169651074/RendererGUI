@@ -124,7 +124,7 @@ function registerIPCChannel() {
         return result;
     });
 
-    ipc.on("chat-message", (event, content) => {
+    ipc.handle("chat-message", async (event, content) => {
         console.log("Sending message", content, "to chat...");
     });
 }
@@ -198,8 +198,9 @@ async function main() {
 
     //当所有窗口关闭时退出应用
     app.on("window-all-closed", () => {
-        console.log("Quit application due to window closed.");
+        console.log("Quit application due to window closed, cleaning up...");
         cleanUp();
+        console.log("Stop main process.");
     });
 
     //当应用被激活时如果没有窗口则创建一个新窗口

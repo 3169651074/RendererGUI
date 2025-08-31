@@ -32,6 +32,7 @@ let copyButton = document.getElementById("copy-button");
 let outputTextarea = document.getElementById("output-command-textarea");
 
 //对话框
+let chatMessagesContainer = document.getElementById("chat-messages");
 let connectionStatus = document.getElementById("connection-status");
 let chatInputTextarea = document.getElementById("chat-input-textarea");
 let checkConnectionButton = document.getElementById("check-connect-button");
@@ -174,8 +175,28 @@ function addListeners() {
     });
 
     //发送消息按钮
-    sendButton.addEventListener("click", () => {
-        mainProcess.sendMessageToChat(chatInputTextarea.value);
+    sendButton.addEventListener("click", async () => {
+        const message = chatInputTextarea.value.trim();
+        if (message !== "") {
+            chatInputTextarea.value = ""; //清空输入框
+            await sendMessageToAI(message);
+        } else {
+            mainProcess.showDialog("info", "Info", "Please enter any prompt.")
+        }
+    });
+
+    //聊天输入框回车发送（Ctrl+Enter换行）
+    chatInputTextarea.addEventListener("keydown", async (event) => {
+        if (event.key === "Enter" && !event.ctrlKey && !event.shiftKey) {
+            event.preventDefault(); //阻止默认换行行为
+            const message = chatInputTextarea.value.trim();
+            if (message !== "") {
+                chatInputTextarea.value = "";
+                await sendMessageToAI(message);
+            } else {
+                mainProcess.showDialog("info", "Info", "Please enter any prompt.")
+            }
+        }
     });
 
     //监听动画结束事件，移除动画类，以便下次可以重新触发

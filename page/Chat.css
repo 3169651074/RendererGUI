@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     flex: 2; /*让左侧内容区占据约2/3宽度*/
+    max-height: calc(100vh - 120px);
 }
 
 /*包裹左侧和右侧设置列的容器*/
@@ -17,6 +18,8 @@
     display: flex;
     flex-direction: column;
     min-width: 200px; /*设置一个最小宽度，防止过窄*/
+    /*限制聊天列的高度*/
+    height: calc(100vh - 200px);
 }
 
 .column-chat label {
@@ -24,6 +27,7 @@
     margin-bottom: 6px;
     font-weight: bold;
     color: #005a70;
+    flex-shrink: 0; /*标签不缩小*/
 }
 
 /*聊天消息显示区域*/
@@ -34,13 +38,35 @@
     padding: 15px;
     background-color: #f8f9fa;
     overflow-y: auto; /*当内容溢出时显示垂直滚动条*/
+    overflow-x: hidden; /*隐藏水平滚动*/
     margin-bottom: 15px;
+    max-height: none; /*移除最大高度限制，让flex控制*/
+}
+
+/*优化滚动条样式*/
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 /*聊天输入区域容器*/
 .chat-input-area {
     display: flex;
     gap: 10px;
+    flex-shrink: 0; /*输入区域不缩小*/
 }
 
 /*聊天输入文本框*/
@@ -57,6 +83,7 @@
     align-items: center;
     /*和聊天区域的间隔*/
     margin-top: 10px;
+    flex-shrink: 0; /*按钮区域不缩小*/
 
     transition: color 0.5s ease;
 }
@@ -85,4 +112,110 @@
     background-color: #a8aeae;
     padding: 12px 15px;
     font-size: 16px;
+}
+
+/*=============*/
+/* 消息容器 */
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 用户消息（右对齐） */
+.message.user {
+    align-items: flex-end;
+}
+
+/* AI消息（左对齐） */
+.message.ai {
+    align-items: flex-start;
+}
+
+/* 消息气泡通用样式 */
+.message-bubble {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* 用户消息气泡样式 */
+.message.user .message-bubble {
+    background-color: #0184ed;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+/* AI消息气泡样式 */
+.message.ai .message-bubble {
+    background-color: #e9ecef;
+    color: #333;
+    border: 1px solid #dee2e6;
+    border-bottom-left-radius: 5px;
+}
+
+/* 消息发送者标签 */
+.message-sender {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+/* 消息时间戳 */
+.message-time {
+    font-size: 11px;
+    color: #adb5bd;
+    margin-top: 4px;
+}
+
+/* 消息淡入动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 加载状态样式 */
+.loading-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.loading-dots {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.loading-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    animation: bounce 1.4s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
 }

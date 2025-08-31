@@ -96,3 +96,82 @@ function generateCommand(outputTextarea, resolutionXInput, resolutionYInput,
         outputTextarea.classList.add("highlight-flash");
     }
 }
+
+// ====== 聊天功能函数 ======
+
+//添加消息到聊天区域
+function addMessageToChat(content, sender = "user", isLoading = false) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${sender}`;
+
+    if (isLoading) {
+        messageDiv.innerHTML = `
+            <div class="loading-message">
+                <span>AI is thinking</span>
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        messageDiv.id = "loading-message";
+    } else {
+        const currentTime = new Date().toLocaleTimeString();
+
+        messageDiv.innerHTML = `
+            <div class="message-sender">${sender === "user" ? "You" : "AI"}</div>
+            <div class="message-bubble">${content}</div>
+            <div class="message-time">${currentTime}</div>
+        `;
+    }
+    chatMessagesContainer.appendChild(messageDiv);
+
+    //自动滚动到底部
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    return messageDiv;
+}
+
+//移除加载消息
+function removeLoadingMessage() {
+    const loadingMessage = document.getElementById("loading-message");
+    if (loadingMessage) {
+        loadingMessage.remove();
+    }
+}
+
+//清空聊天区域
+function clearChat() {
+    chatMessagesContainer.innerHTML = "";
+}
+
+//发送消息到AI
+async function sendMessageToAI(message) {
+    //添加用户消息
+    addMessageToChat(message, "user");
+
+    //显示加载状态
+    addMessageToChat("", "ai", true);
+
+    try {
+        //调用主进程的聊天功能
+        const response = await mainProcess.sendMessageToChat(message);
+
+        //移除加载状态
+        removeLoadingMessage();
+
+        //添加AI回复
+        if (response && response.trim()) {
+            addMessageToChat(response, "ai");
+        } else {
+            addMessageToChat("Sorry, an error encountered while processing message.", "ai");
+        }
+    } catch (error) {
+        //移除加载状态
+        removeLoadingMessage();
+
+        //显示错误消息
+        addMessageToChat("Failed to get response from AI. Please check your connection.", "ai");
+        console.error("Chat error:", error);
+    }
+}

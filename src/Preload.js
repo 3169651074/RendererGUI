@@ -20,7 +20,7 @@ function checkConnection() {
 }
 
 function sendMessageToChat(content) {
-    ipc.send("chat-message", content);
+    return ipc.invoke("chat-message", content);
 }
 
 // ====== 向渲染进程转发 ======

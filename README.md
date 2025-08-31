@@ -35,7 +35,7 @@ API_KEY=<your api key>
 * *如果使用DeepSeek模型，则不要使用Reasoner，思考模型不支持MCP调用*
 
 ## Run
-将package.json中"scripts"属性中的"test"一行替换为`"start": "electron ."`  
+将package.json中"scripts"属性中的"test"一行替换为`"start": "electron ."`，将"main"修改为`"main": "src/Main.js",`
 然后运行命令
 ```
 npm start

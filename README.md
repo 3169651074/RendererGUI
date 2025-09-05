@@ -32,7 +32,7 @@ API_KEY=<your api key>
 
 * 在Config.js中配置大模型API地址和模型ID。如有需要，可配置网络代理。  
 * *请输入完整的API地址，如`https://api.deepseek.com/v1/chat/completions`而不是`https://api.deepseek.com`，可以使用Cherry Studio或官方文档确认*
-* *如果使用DeepSeek模型，则不要使用Reasoner，思考模型不支持MCP调用*
+* *请不要使用带思考的推理模型*
 
 ## Run
 将package.json中"scripts"属性中的"test"一行替换为`"start": "electron ."`，将"main"修改为`"main": "src/Main.js",`

@@ -13,6 +13,8 @@ const serverScriptPath = "./MCPServer.js";
 let clientProcess = null;
 let serverProcess = null;
 
+let messageWaiter = null;
+
 // ====== 主逻辑函数 ======
 
 // ====== MCP客户端 ======
@@ -36,7 +38,7 @@ function startMCPClient() {
             });
 
             clientProcess.once("exit", (code, signal) => {
-                console.log(`MCP Client process exited: code = ${code}, signal = ${signal}`);
+                console.log("MCP Client process exited, code =", code, ", signal =", signal);
             });
 
             clientProcess.on("error", (err) => {
@@ -47,12 +49,30 @@ function startMCPClient() {
             //转发客户端进程的输出
             clientProcess.stdout.on("data", (data) => {
                 //data为缓冲区ASCII，需要转换为字符串，并去掉末尾自带的换行符
-                console.log("[MCP Client]", data.toString().slice(0, -1));
+                const str = data.toString().slice(0, -1);
+                //console.log("[MCP Client]", str);
+
+                if (str.startsWith("[OK]") && messageWaiter != null) {
+                    //如果正在等待结果，就调用它的resolve函数
+                    messageWaiter.resolve(str);
+                    messageWaiter = null; //完成后清空，准备下一次等待
+                } else if (str.startsWith("[Error]") && messageWaiter != null) {
+                    messageWaiter.reject(str);
+                    messageWaiter = null;
+                } else {
+                    //如果不是结果，那就是普通日志，直接打印
+                    console.log("[MCP Client]", str);
+                }
             });
 
             clientProcess.stderr.on("data", (data) => {
-                //使用StdioClientTransport启动服务器进程，服务器信息在stderr上打印
-                console.error("[MCP Server]", data.toString().slice(0, -1));
+                //使用StdioClientTransport启动服务器进程，服务器信息在stderr上打印，去掉末尾的换行符
+                const str = data.toString().slice(0, -1);
+                if (str.startsWith("[Tool]")) {
+                    console.log("[MCP Tool]", str);
+                } else {
+                    console.log("[MCP Server]", str);
+                }
             });
         } catch (e) {
             reject(e);
@@ -78,31 +98,30 @@ function stopMCPClient() {
 }
 
 //等待客户端返回调用结果
-function waitForMessage() {
+async function waitForMessage() {
     return new Promise((resolve, reject) => {
-        clientProcess.stdout.on("data", (data) => {
-            const message = data.toString().trim();
-            //收到特定消息，Promise完成
-            if (message.startsWith("[OK]")) {
-                resolve(message);
-            } else if (message.startsWith("[Error]")) {
-                reject(message);
-            }
-        });
+        //检查是否已经有另一个请求正在等待结果，防止并发错误
+        if (messageWaiter != null) {
+            return reject("Another prompt is already waiting for a response.");
+        }
+
+        //将resolve和reject函数存起来，交给中央处理器去调用
+        messageWaiter = { resolve, reject };
     });
 }
 
 //向客户端发送用户提示词
 async function sendUserPrompt(content) {
     if (clientProcess == null) {
-        throw new Error("Client process does not exist.");
+        return Promise.reject("Client process does not exist.");
     }
     if (!clientProcess.stdin.writable) {
-        throw new Error("Client stdin does not writable.");
+        return Promise.reject("Client stdin does not writable.");
     }
 
     //向客户端进程的stdin中写入后等待消息
-    clientProcess.stdin.write(content);
+    //console.log("Writing content:", content);
+    clientProcess.stdin.write(content + "\n");
     return await waitForMessage();
 }
 
@@ -145,7 +164,7 @@ function startMCPServer() {
             });
 
             serverProcess.once("exit", (code, signal) => {
-                console.log(`MCP Server process exited: code = ${code}, signal = ${signal}`);
+                console.log("MCP Server process exited, code =", code, ", signal =", signal);
             });
 
             serverProcess.on("error", (err) => {

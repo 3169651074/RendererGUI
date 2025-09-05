@@ -15,18 +15,25 @@ const config = {
     //渲染器可执行文件路径
     executablePath: "E:\\Code\\C++Test\\bin\\C++Test.exe",
 
+    //API格式："OpenAI" 或 "Anthropic"
+    apiFormat: "OpenAI",
     //API地址
     apiAddress: "https://api.deepseek.com/v1/chat/completions",
     //从.env导入API Key
     apiKey: process.env.API_KEY,
     //模型ID
     modelID: "deepseek-chat",
-
-    //网络代理
-    proxy: null,
-
+    //系统提示词
+    systemPrompt: "You are a helper who help user configure ray tracer.",
     //是否启用代理
-    isUseProxy: false
+    isUseProxy: false,
+    //网络代理
+    proxy: {
+        host: "localhost",
+        port: 7897
+    },
+    //是否启用MCP
+    isUseMCP: true,
 };
 
 //导出configs对象中的属性

@@ -42,7 +42,7 @@ function startRenderer() {
             });
 
             rendererProcess.once("exit", (code, signal) => {
-                console.log(`Renderer process exited: code = ${code}, signal = ${signal}`);
+                console.log("Renderer process exited, code =", code, ", signal =", signal);
                 rendererProcess = null;
             });
 

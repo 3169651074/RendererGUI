@@ -107,7 +107,7 @@ function addMessageToChat(content, sender = "user", isLoading = false) {
     if (isLoading) {
         messageDiv.innerHTML = `
             <div class="loading-message">
-                <span>AI is thinking</span>
+                <span>Generating Response</span>
                 <div class="loading-dots">
                     <span></span>
                     <span></span>
@@ -140,7 +140,7 @@ function removeLoadingMessage() {
     }
 }
 
-//清空聊天区域
+//TODO 清空聊天区域
 function clearChat() {
     chatMessagesContainer.innerHTML = "";
 }
@@ -156,13 +156,14 @@ async function sendMessageToAI(message) {
     try {
         //调用主进程的聊天功能
         const response = await mainProcess.sendMessageToChat(message);
+        console.log("Received response:", response);
 
         //移除加载状态
         removeLoadingMessage();
 
         //添加AI回复
         if (response == null || typeof response !== "string" || response === "") {
-            addMessageToChat("Error: response message is an empty string.", "ai");
+            addMessageToChat("Error: response message is null or an empty string.", "ai");
             return;
         }
 
@@ -171,7 +172,7 @@ async function sendMessageToAI(message) {
         } else if (response.startsWith("[Error]")) {
             addMessageToChat(`Error: ${response.substring(7, response.length)}`, "ai");
         } else {
-            addMessageToChat("Received unknown response from call:", response);
+            addMessageToChat("Received unknown type of response from call:", response);
         }
     } catch (error) {
         //移除加载状态

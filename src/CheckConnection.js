@@ -2,7 +2,7 @@
 
 // ====== 导入配置和库 ======
 
-const config = require('./Config.js');
+const configs = require('./Config.js');
 const axios = require('axios');
 
 // ====== 主逻辑函数 ======
@@ -13,16 +13,16 @@ async function checkModelConnection() {
         //配置请求选项
         const options = {
             method: "GET",
-            url: config.apiAddress,
+            url: configs.apiAddress,
             timeout: 5000, //超时时间
             headers: {
-                'Authorization': `Bearer ${config.apiKey}`
+                'Authorization': `Bearer ${configs.apiKey}`
             }
         };
 
         //如果启用了代理
-        if (config.isUseProxy && config.proxy != null) {
-            options.proxy = config.proxy;
+        if (configs.isUseProxy && configs.proxy != null) {
+            options.proxy = configs.proxy;
         }
 
         //发送请求
@@ -46,29 +46,29 @@ async function checkModelConnection() {
     }
 }
 
-//发送测试消息，消耗token（10）
+//发送测试消息，消耗少量token
 async function checkModelConnectionSendingMessage() {
     try {
         const options = {
             method: "POST",
-            url: config.apiAddress,
+            url: configs.apiAddress,
             timeout: 5000,
             headers: {
-                "Authorization": `Bearer ${config.apiKey}`,
+                "Authorization": `Bearer ${configs.apiKey}`,
                 "Content-Type": "application/json"
             },
             data: {
-                model: config.modelID,
+                model: configs.modelID,
                 messages: [
                     { role: "user", content: "Hi" }
                 ],
-                max_tokens: 10, //限制token消耗
-                temperature: 0  //降低随机性
+                max_tokens: 10,
+                temperature: 0
             }
         };
 
-        if (config.isUseProxy && config.proxy != null) {
-            options.proxy = config.proxy;
+        if (configs.isUseProxy && configs.proxy != null) {
+            options.proxy = configs.proxy;
         }
         await axios(options);
 

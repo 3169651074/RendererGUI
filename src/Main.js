@@ -127,11 +127,13 @@ function registerIPCChannel() {
     });
 
     ipc.handle("chat-message", async (event, content) => {
-        console.log("Sending message", content, "to chat...");
-
-        //客户端使用readline进行读取，末尾需要换行符
-        //return mcpProcess.sendUserPrompt(content + "\n");
-        return await chatService.callAI(content);
+        if (configs.isUseMCP) {
+            console.log("Sending message", content, "to chat with MCP...");
+            return await chatService.callAIWithTools(content);
+        } else {
+            console.log("Sending message", content, "to chat without MCP...");
+            return await chatService.callAIWithoutTools(content);
+        }
     });
 }
 
@@ -188,7 +190,6 @@ function cleanUp() {
     //确保子进程停止
     rendererProcess.stopRenderer();
     mcpProcess.stopMCPClient();
-    //mcpProcess.stopMCPServer();
 
     app.quit();
 }
@@ -198,7 +199,6 @@ async function main() {
     console.log("Starting main process...");
 
     //准备完成时创建窗口，阻塞main方法
-    //app.on("ready", createWindow);
     await waitAppReady();
     await createWindow();
 
@@ -216,12 +216,13 @@ async function main() {
 
     //启动子进程
     rendererProcess.startRenderer();
-    //mcpProcess.startMCPServer();
     mcpProcess.startMCPClient();
 }
 
 main().then(() => {
     console.log("Finish initializing window.");
+}).catch((error) => {
+    console.log("Error starting main process:", error);
 });
 
 

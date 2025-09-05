@@ -245,13 +245,12 @@ async function chatLoop() {
     //传递调用结果：向stdout中打印以[OK]或[Error]开头的字符串，后面接大模型的回复消息或错误信息
     for await (const line of rl) {
         console.log("Received user input \"", line, "\" from main process.");
-        // try {
-        //     const result = await handleToolCall(line);
-        //     console.log("[OK]" + result);
-        // } catch (error) {
-        //     console.log("[Error]" + error);
-        // }
-        console.log("[OK]AAAAAA");
+        try {
+            const result = await handleToolCall(line);
+            console.log("[OK]" + result);
+        } catch (error) {
+            console.log("[Error]" + error);
+        }
     }
 
     console.log("stdin.end() called, quitting chat loop...");

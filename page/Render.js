@@ -120,9 +120,9 @@ function addListeners() {
                 setTimeout(() => {
                     copyButton.textContent = "Copy";
                 }, 2000);
-            }).catch(err => {
+            }).catch(error => {
                 //显示失败对话框
-                mainProcess.showDialog("error", "Error", "Failed to copy command.");
+                mainProcess.showDialog("error", "Error", "Failed to copy command:", error);
             });
         } else {
             //未生成命令

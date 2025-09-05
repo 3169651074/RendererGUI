@@ -4,10 +4,11 @@
 
 const configs = require('./Config.js');
 const axios = require('axios');
+const {SocksProxyAgent} = require("socks-proxy-agent");
 
 // ====== 主逻辑函数 ======
 
-//仅检查服务器连接，不发送消息，无token消耗
+//仅检查服务器连接，不发送消息，无token消耗，可能会错误地失败
 async function checkModelConnection() {
     try {
         //配置请求选项
@@ -20,9 +21,15 @@ async function checkModelConnection() {
             }
         };
 
-        //如果启用了代理
-        if (configs.isUseProxy && configs.proxy != null) {
-            options.proxy = configs.proxy;
+        //添加代理
+        if (configs.isUseProxy) {
+            if (configs.isUseSocks) {
+                options.httpsAgent = new SocksProxyAgent(configs.socksProxy);
+                console.log("Using socks proxy:", options.httpsAgent);
+            } else {
+                options.proxy = configs.proxy;
+                console.log("Using proxy:", options.proxy);
+            }
         }
 
         //发送请求
@@ -67,8 +74,15 @@ async function checkModelConnectionSendingMessage() {
             }
         };
 
-        if (configs.isUseProxy && configs.proxy != null) {
-            options.proxy = configs.proxy;
+        //添加代理
+        if (configs.isUseProxy) {
+            if (configs.isUseSocks) {
+                options.httpsAgent = new SocksProxyAgent(configs.socksProxy);
+                console.log("Using socks proxy:", options.httpsAgent);
+            } else {
+                options.proxy = configs.proxy;
+                console.log("Using proxy:", options.proxy);
+            }
         }
         await axios(options);
 

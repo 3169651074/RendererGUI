@@ -76,6 +76,7 @@ async function cleanUp() {
     await client.close();
 }
 
+//TODO 全局上下文数组管理。删除上下文为清空messages数组
 //处理带有工具调用的提示词请求
 async function handleToolCall(content) {
     try {
@@ -90,6 +91,7 @@ async function handleToolCall(content) {
                         { role: "system", content: configs.systemPrompt },
                         { role: "user", content: content }
                     ],
+                    max_tokens: configs.maxTokenCount,
                     tools: tools
                 };
                 break;
@@ -97,7 +99,7 @@ async function handleToolCall(content) {
                 requestData = {
                     model: configs.modelID,
                     system: configs.systemPrompt,
-                    max_tokens: 4096,
+                    max_tokens: configs.maxTokenCount,
                     messages: [
                         { role: "user", content: content }
                     ],
@@ -116,6 +118,7 @@ async function handleToolCall(content) {
                 'Authorization': `Bearer ${configs.apiKey}`,
                 'Content-Type': 'application/json'
             },
+            //TODO
             proxy: configs.isUseProxy ? configs.proxy : false
         });
 
@@ -128,7 +131,7 @@ async function handleToolCall(content) {
         switch (configs.apiFormat) {
             case "OpenAI": {
                 const data = response.data.choices[0].message;
-                if ("content" in data && data.content != null) {
+                if ("content" in data && data.content != null && data.content !== "") {
                     //无需调用工具
                     console.log("Initial request finished without calling tool:\n", data.content);
                     return Promise.resolve(data.content);
@@ -174,14 +177,29 @@ async function handleToolCall(content) {
 
         //调用MCP服务器注册的工具
         let toolResultMessage = null;
-        const toolResult = await client.callTool(toolName, toolArgs);
+
+        //超时处理
+        const toolResult = await Promise.race([
+            //callTool的参数必须严格遵守格式，否则会超时
+            client.callTool({
+                name: toolName, arguments: toolArgs
+            }),
+            new Promise((resolve, reject) =>
+                setTimeout(() => reject("Tool call timeout"), 8000)
+            )
+        ]);
         console.log("Tool execution successful. Result:", toolResult);
+
+        const toolResultText = toolResult.content[0].text;
+        if (toolResultText == null) {
+            return Promise.reject("Failed to get text from result object.");
+        }
 
         //将工具结果作为新消息返回给模型，client.callTool() 的返回值就是MCP服务器中注册的工具执行函数的返回值，用这个结果来构造下一条发给模型的请求
         switch (configs.apiFormat) {
             case "OpenAI":
                 toolResultMessage = {
-                    role: "tool", tool_call_id: toolCallId, content: toolResult
+                    role: "tool", tool_call_id: toolCallId, content: toolResultText
                 };
                 break;
             case "Anthropic":
@@ -190,7 +208,7 @@ async function handleToolCall(content) {
                     content: [{
                         type: "tool_result",
                         tool_use_id: toolCallId,
-                        content: typeof toolResult === "string" ? toolResult : JSON.stringify(toolResult)
+                        content: toolResultText
                     }]
                 };
                 break;
@@ -208,6 +226,7 @@ async function handleToolCall(content) {
                 'Authorization': `Bearer ${configs.apiKey}`,
                 'Content-Type': 'application/json'
             },
+            //TODO
             proxy: configs.isUseProxy ? configs.proxy : false
         });
 
@@ -247,7 +266,7 @@ async function chatLoop() {
         console.log("Received user input \"", line, "\" from main process.");
         try {
             const result = await handleToolCall(line);
-            console.log("[OK]" + result);
+            //console.log("[OK]" + result);
         } catch (error) {
             console.log("[Error]" + error);
         }

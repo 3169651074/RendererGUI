@@ -1,6 +1,7 @@
 const configs = require("./Config.js");
 const axios = require("axios");
 const mcpProcess = require("./MCPProcess.js");
+const SocksProxyAgent = require("socks-proxy-agent").SocksProxyAgent;
 
 //向大模型发送消息，无工具调用
 async function callAIWithoutTools(messages) {
@@ -15,6 +16,7 @@ async function callAIWithoutTools(messages) {
                         //{ role: "system", content: "Plain text response, do not use any markdown syntax"},
                         { role: "user", content: messages }
                     ],
+                    max_tokens: configs.maxTokenCount,
                     store: true
                 }
                 break;
@@ -22,6 +24,7 @@ async function callAIWithoutTools(messages) {
                 requestData = {
                     model: configs.modelID,
                     //system: "Plain text response, do not use any markdown syntax",
+                    max_tokens: configs.maxTokenCount,
                     messages: { role: "user", content: messages }
                 }
                 break;
@@ -29,14 +32,26 @@ async function callAIWithoutTools(messages) {
                 return "[Error]Unknown API format.";
         }
 
-        //发送请求
-        const response = await axios.post(configs.apiAddress, requestData, {
+        const options = {
             headers: {
                 'Authorization': `Bearer ${configs.apiKey}`,
                 'Content-Type': 'application/json'
-            },
-            proxy: configs.isUseProxy ? configs.proxy : false
-        });
+            }
+        };
+
+        //添加代理
+        if (configs.isUseProxy) {
+            if (configs.isUseSocks) {
+                options.httpsAgent = new SocksProxyAgent(configs.socksProxy);
+                console.log("Using socks proxy:", options.httpsAgent);
+            } else {
+                options.proxy = configs.proxy;
+                console.log("Using proxy:", options.proxy);
+            }
+        }
+
+        //发送请求
+        const response = await axios.post(configs.apiAddress, requestData, options);
 
         if (response.data == null) {
             return "[Error]Response is null.";

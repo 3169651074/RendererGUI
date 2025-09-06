@@ -1,6 +1,9 @@
 # RendererGUI
 A simple ray tracer config GUI based on Electron
 
+## MCP
+此GUI集成了一个MCP客户端和一个MCP服务器，内置大模型聊天功能，并使用MCP允许大模型访问工具以和渲染器子进程和页面元素。目前支持OpenAI API格式和Anthropic API格式。
+
 ## Build
 此桌面应用基于Electron，构建前需要安装Node.js，推荐20+版本  
 下载仓库文件后，在项目根目录打开终端，关闭网络代理，执行以下命令：  

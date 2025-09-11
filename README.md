@@ -32,8 +32,7 @@ cnpm i -D electron@latest
 
 3. 安装MCP SDK和辅助库
 ```
-cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript
-```
+cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript socks-proxy-agent
 
 **库安装完成后，如果移动了项目文件夹，请删除node_modules文件夹、package.json、package-lock.json并重新执行安装步骤**
 

@@ -4,6 +4,7 @@ const mcpProcess = require("./MCPProcess.js");
 const SocksProxyAgent = require("socks-proxy-agent").SocksProxyAgent;
 
 //向大模型发送消息，无工具调用
+//TODO 增加上下文管理
 async function callAIWithoutTools(messages) {
     try {
         //构造消息JSON对象
@@ -78,6 +79,7 @@ async function callAIWithoutTools(messages) {
 }
 
 //向大模型发送消息，包含工具列表，启用工具调用
+//TODO 增加上下文管理
 async function callAIWithTools(messages) {
     return await mcpProcess.sendUserPrompt(messages);
 }

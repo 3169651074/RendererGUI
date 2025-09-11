@@ -9,7 +9,7 @@
  * 7. npm i cnpm
  * 8. cnpm i -D electron@latest（必须在CMD中执行）
  * 9. 在package.json中修改scripts为"start": "electron ." 修改main为"main": "src/Main.js",
- * 10. cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript
+ * 10. cnpm install @modelcontextprotocol/sdk zod@3 dotenv axios @types/node typescript socks-proxy-agent
  */
 
 // ====== 导入设置 ======
@@ -117,13 +117,13 @@ function registerIPCChannel() {
 
     ipc.handle("check-connection", async (event) => {
         console.log("Checking model connection...");
-        const result = (await checkConnection.checkModelConnectionSendingMessage()).success; //等待异步结果
-        if (result) {
-            console.log("Connection check success.");
+        const result = (await checkConnection.checkModelConnectionSendingMessage()); //等待异步结果
+        if (result.success) {
+            console.log("Connection check success, message =", result.message);
         } else {
-            console.log("Connection check failed:", result.message);
+            console.log("Connection check failed, message =", result.message);
         }
-        return result;
+        return result.success;
     });
 
     ipc.handle("chat-message", async (event, content) => {

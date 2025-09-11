@@ -1,8 +1,20 @@
 # RendererGUI
 A simple ray tracer config GUI based on Electron
 
+## TODO
+已实现的部分：  
+&emsp;&emsp;1.构建了应用页面和基本逻辑，正确使用了Electron框架的ipc通信机制  
+&emsp;&emsp;2.搭建了MCP客户端和服务器框架，MCP部分仅工具具体实现逻辑没有编写
+
+未实现的部分：  
+&emsp;&emsp;1.渲染器子进程可能会在启动后立即报错退出  
+&emsp;&emsp;2.isUseMCP为true时，大模型的回复不能正确传递回渲染进程，从而无法显示在页面上，为false时正常  
+&emsp;&emsp;3.未实现大模型流式输出回复。无法渲染markdown格式的回复文本（应当通过提示词限制大模型仅回复纯文本）  
+&emsp;&emsp;4.页面排版问题，生成命令按钮过大等  
+&emsp;&emsp;5.（可选）在页面中提供修改配置的菜单而不是需要打开Config.js和.env进行修改并重启
+
 ## MCP
-此GUI集成了一个MCP客户端和一个MCP服务器，内置大模型聊天功能，并使用MCP允许大模型访问工具以和渲染器子进程和页面元素。目前支持OpenAI API格式和Anthropic API格式。
+此GUI集成了一个MCP客户端和一个MCP服务器，内置大模型聊天功能，并使用MCP允许大模型访问工具以和渲染器子进程和页面元素。目前支持OpenAI API格式和Anthropic API格式。MCP客户端位于MCPClient.js文件，MCP服务器位于MCPServer.js文件。客户端和服务器部分可以单独运行：将两个MCP文件以及Config.js，.env文件复制出来，使用npm安装依赖库后，运行MCPClient.js即可，客户端会自动启动服务器。启动后，可在终端中向大模型发送提示词，回复也将在终端中展示。此外，也可以在Cherry Studio等第三方MCP客户端中测试MCPServer.js。
 
 ## Build
 此桌面应用基于Electron，构建前需要安装Node.js，推荐20+版本  

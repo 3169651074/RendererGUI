@@ -2,6 +2,7 @@
 
 const configs = require("./Config.js");
 const childProcess = require("child_process");
+const path = require("path");
 
 // ====== 全局对象变量 ======
 
@@ -17,7 +18,8 @@ function startRenderer() {
         return Promise.resolve(true);
     }
 
-    const executablePath = configs.executablePath;
+    const executablePath = path.join(__dirname.slice(0, -4), configs.executablePath);
+    //const executablePath = "F:\\Code\\Simulation\\RendererGUI\\files\\C++Test.exe";
 
     /*
      * 启动可执行文件作为子进程

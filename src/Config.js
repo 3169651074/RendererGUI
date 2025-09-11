@@ -12,8 +12,8 @@ const config = {
     windowWidth: 1600,
     windowHeight: 900,
 
-    //渲染器可执行文件路径
-    executablePath: "E:\\Code\\C++Test\\bin\\C++Test.exe",
+    //渲染器可执行文件路径（项目根目录相对路径）
+    executablePath: "files/C++Test.exe",
 
     //API格式："OpenAI" 或 "Anthropic"
     apiFormat: "OpenAI",
@@ -67,7 +67,7 @@ const config = {
     isUseSocks: true,
 
     //是否启用MCP（false将进行普通对话）
-    isUseMCP: true,
+    isUseMCP: false,
 };
 
 //导出configs对象中的属性
